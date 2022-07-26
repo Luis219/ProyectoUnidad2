@@ -11,7 +11,7 @@ App.Intro = {
         game.load.audio("no", ["../static/sonidos/no.mp3", "../static/sonidos/no.ogg"]);
         game.load.image("logo", "../static/imagenes/zk.png");
         game.load.image("bg", "../static/imagenes/bg.jpg");
-        game.load.image("playbtn1", "../static/imagenes/playsound.png");
+        game.load.image("playbtn1", "../static/imagenes/playsound1.png");
         game.load.image("playbtn2", "../static/imagenes/playsoundpressed.png");
     },
     create: function() {
@@ -34,11 +34,11 @@ var sndCorrect;
 var sndWrong;
 App.Main = {
     preload: function() {
-        for(var i = 0; i < 2; i++){
+        for(var i = 0; i < 10; i++){
             game.load.image("animage" + (i+1), "../static/imagenes/anm" + (i+1) + ".png");
         }
         game.load.image("unknown", "../static/imagenes/unknown.png");
-        currentSound = game.rnd.integerInRange(1, 2);
+        currentSound = game.rnd.integerInRange(1, 10);
         game.load.audio("currentSound", ["../static/sonidos/sound" + currentSound + ".mp3", "../static/sonidos/sound" + currentSound + ".ogg"]);
         game.load.audio("yes", ["../static/sonidos/yes.mp3", "../static/sonidos/yes.ogg"]);
         game.load.audio("no", ["../static/sonidos/no.mp3", "../static/sonidos/no.ogg"]);
@@ -71,8 +71,8 @@ App.Main = {
         
 
         function soundStopped(){
-            console.log("Sonido detenido.");
-            showGt("What animal was that?")
+            console.log("Sonido detenido / Sound stopped");
+            showGt("What animal was that?/ ¿Qué animal es ?")
             isPaused = false;
             
             //determine, left or right to be correct answer
@@ -126,12 +126,14 @@ function playCurrentSound(element){
 function getRandomImage(){
     var rimg = currentSound;
     while(rimg == currentSound){
-        rimg = game.rnd.integerInRange(1, 24);
+        rimg = game.rnd.integerInRange(1, 10);
     }
     return rimg;
 }
 
 function checkAnswer(x, element){
+
+     score=0;
     if(!isPaused){
         isPaused = true;
         if(x == 0){
@@ -139,8 +141,11 @@ function checkAnswer(x, element){
             showGt("<h1>Incorrecto!</h1>");
             sndWrong.play();
         }else{
-            console.log("Correctp!");
+            
             showGt("<h1>Correcto!</h1>");
+            score=score+1;
+            console.log("Correcto!"+score);
+            showGt("<h2></h2>",score);
             sndCorrect.play();
         }
         setTimeout(function(){
