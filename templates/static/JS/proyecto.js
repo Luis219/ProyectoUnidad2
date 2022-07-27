@@ -33,6 +33,7 @@ var snd;
 var sndCorrect;
 var sndWrong;
 App.Main = {
+    //Funcion de precarga de datos
     preload: function() {
         for(var i = 0; i < 10; i++){
             game.load.image("animage" + (i+1), "../static/imagenes/anm" + (i+1) + ".png");
@@ -44,6 +45,7 @@ App.Main = {
         game.load.audio("no", ["../static/sonidos/no.mp3", "../static/sonidos/no.ogg"]);
     },
     create: function() {
+        /**Función que reproduce el audio actual */
         isPaused = false;
         snd = game.add.audio("currentSound", 1, false);
         snd.onStop.add(soundStopped, this);
@@ -71,6 +73,7 @@ App.Main = {
         
 
         function soundStopped(){
+            /**Función que detiene el sonido y en la que se determina la respuesta correcta */
             console.log("Sonido detenido / Sound stopped");
             showGt("What animal was that?/ ¿Qué animal es ?")
             isPaused = false;
@@ -114,6 +117,7 @@ game.state.add("main", App.Main);
 game.state.start("intro");
 
 function playCurrentSound(element){
+    //Reproudcción de osnido actual
     if(!isPaused){
         isPaused = true;
         console.log("clicked");
@@ -124,6 +128,7 @@ function playCurrentSound(element){
 }
 
 function getRandomImage(){
+    //Obtener imágenes de forma random
     var rimg = currentSound;
     while(rimg == currentSound){
         rimg = game.rnd.integerInRange(1, 10);
@@ -132,27 +137,50 @@ function getRandomImage(){
 }
 
 function checkAnswer(x, element){
+    //Verificar la respuesta correcta
 
-     score=0;
+    score=0;
     if(!isPaused){
         isPaused = true;
+        
         if(x == 0){
             console.log("Incorrecto!");
             showGt("<h1>Incorrecto!</h1>");
             sndWrong.play();
         }else{
-            
+           
             showGt("<h1>Correcto!</h1>");
-            score=score+1;
-            console.log("Correcto!"+score);
-            showGt("<h2></h2>",score);
+           // score=score;
+       
+            console.log("Correcto!");
+            
             sndCorrect.play();
+            score=score+1;
+             
+            
+            
+          
+                
+        
+            
+            /** 
+            showGt("<h2></h2>",score);
+            */
         }
+        verScore(score)
         setTimeout(function(){
             game.state.start("main");
         }, 2000);
         btnTween(element, 0);
     }
+}
+
+function verScore(score){
+    score+=1;
+    
+
+   
+    console.log(score);
 }
 
 function fadeInTween(element, delay){

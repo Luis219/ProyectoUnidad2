@@ -5,26 +5,27 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Animals</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 
-<body class="bg-info">
+<body class="bg-warning">
     <br>
     <center>
-        <h1 class="elementor-heading-title elementor-size-default">Animales en inglés</h1>
+        <h1 class="elementor-heading-title elementor-size-default ">Animales en inglés</h1>
     </center>
-    <div class="album py-5 bg-info">
-        <div class="container-lg border-info border ">
-
+    <div class="album py-5 bg-warning">
+        <div class="container-lg border-warning border ">
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                <audio src=" " class="audio"></audio>
                 <div class="col">
-                    <div class="card shadow-sm">
-                        <button type="button" class="btn btn-secondary" id="enviar" onmousedown="sonido.play()"> <img
-                                src=https://concepto.de/wp-content/uploads/2019/04/gato-e1556582412929.jpg height="200"
-                                width="335" style="border: double; color: black;" /></button>
+                    <div class="card shadow-sm" data-sound="../static/sonidos/sound3.mp3" onclick="animaleSound(this)">
+                        <button type="button" class="btn btn-secondary" style="background-color:rgb(187, 125, 32)"
+                        id="enviar"><img src="../static/imagenes/anm3.png" height="200"
+                                width="335" /></button>
                         <div class="card-body justify-content-between ">
                             <CENTER>
                                 <p class="card-text">
@@ -35,10 +36,10 @@
                     </div>
                 </div>
                 <div class="col">
-                    <div class="card shadow-sm">
-                        <button type="button" class="btn btn-secondary" id="enviar" onmousedown="sonido.play()"> <img
-                                src=https://3.bp.blogspot.com/-etgmzVN8IoI/T6NaW_0oF7I/AAAAAAAACR0/KqmkI3fCXdk/s1600/vaca.jpg
-                                height="200" width="335" style="border: double; color: black;" /></button>
+                    <div class="card shadow-sm" data-sound="../static/sonidos/sound5.mp3" onclick="animaleSound(this)">
+                        <button type="button" class="btn btn-secondary" style="background-color:rgb(187, 125, 32)"
+                            id="enviar"> <img src="../static/imagenes/anm5.png" height="200"
+                                width="335" /></button>
                         <div class="card-body justify-content-between ">
                             <CENTER>
                                 <p class="card-text">
@@ -49,10 +50,10 @@
                     </div>
                 </div>
                 <div class="col">
-                    <div class="card shadow-sm">
-                        <button type="button" class="btn btn-secondary" id="enviar" onmousedown="sonido.play()"> <img
-                                src=https://us.123rf.com/450wm/snr/snr1810/snr181000039/116186404-gallo-gallus-gallus-domesticus-en-el-patio.jpg?ver=6
-                                height="200" width="335" style="border: double; color: black;" /></button>
+                    <div class="card shadow-sm" data-sound="../static/sonidos/sound1.mp3" onclick="animaleSound(this)">
+                        <button type="button" class="btn btn-secondary" style="background-color:rgb(187, 125, 32)"
+                            id="enviar"> <img src="../static/imagenes/anm1.png" height="200"
+                                width="335" /></button>
                         <div class="card-body justify-content-between ">
                             <CENTER>
                                 <p class="card-text">
@@ -63,30 +64,28 @@
                     </div>
                 </div>
                 <div class="col">
-                    <div class="card shadow-sm">
-                        <button type="button" class="btn btn-secondary" id="enviar" data-sound="../static/sonidos/Gallo.mp3" onclick="plays(this)"> <img
-                                src=https://media.baamboozle.com/uploads/images/154963/1614335889_71365.jpeg
-                                height="200" width="335" style="border: double; color: black;" /></button>
+                    <div class="card shadow-sm "  data-sound="../static/sonidos/sound2.mp3" onclick="animaleSound(this)">
+                        <button type="button" class="btn btn-secondary" style="background-color:rgb(187, 125, 32)"
+                            id="enviar"> <img src="../static/imagenes/anm2.png" height="200"
+                                width="335" /></button>
                         <div class="card-body justify-content-between ">
                             <CENTER>
                                 <p class="card-text">
-                                <h5>GALLO-ROOSTER</h5>
+                                <h5>PÁJARO - BIRD</h5>
                                 </p>
                             </CENTER>
                         </div>
                     </div>
                 </div>
                 <div class="col">
-                    <div class="card shadow-sm">
-                        <button type="button" class="btn btn-secondary" id="enviar" onclick="sonido.play()"> <audio>
-                            <source src="../static/sonidos/perro.mp3">
-                        <img
-                                src=https://lanoticia.com/wp-content/uploads/2022/06/elefante.jpg height="200"
-                                width="335" style="border: double; color: black;" /></audio></button>
+                    <div class="card shadow-sm"  data-sound="../static/sonidos/sound4.mp3" onclick="animaleSound(this)">
+                        <button type="button" class="btn btn-secondary" style="background-color:rgb(187, 125, 32)"
+                            id="enviar">
+                            <img src="../static/imagenes/anm4.png" height="200" width="335" /></button>
                         <div class="card-body justify-content-between ">
                             <CENTER>
                                 <p class="card-text">
-                                <h5>ELEFANTE-ELEPHANT
+                                <h5>MONO - MONKEY
                                 </h5>
                                 </p>
                             </CENTER>
@@ -94,26 +93,94 @@
                     </div>
                 </div>
                 <div class="col">
-                    <div class="card shadow-sm">
-                        <button type="button" class="btn btn-secondary" id="enviar" onmousedown="sonido.play()"> <img
-                                src=https://arbolabc.nyc3.cdn.digitaloceanspaces.com/Science/animals/articles/animales-domesticos/dog.jpg
-                                height="200" width="335" style="border: double; color: black;" /></button>
+                    <div class="card shadow-sm"  data-sound="../static/sonidos/sound6.mp3" onclick="animaleSound(this)">
+                        <button type="button" class="btn btn-secondary" style="background-color:rgb(187, 125, 32)"
+                            id="enviar"> <img src="../static/imagenes/anm6.png" height="200"
+                                width="335" /></button>
                         <div class="card-body justify-content-between ">
                             <CENTER>
                                 <p class="card-text">
-                                <h5>PERRO-DOG</h5>
+                                <h5>SALTAMONTE - CRICKET</h5>
                                 </p>
                             </CENTER>
                         </div>
                     </div>
                 </div>
-
-
+                <div class="col">
+                    <div class="card shadow-sm"  data-sound="../static/sonidos/sound7.mp3" onclick="animaleSound(this)">
+                        <button type="button" class="btn btn-secondary" style="background-color:rgb(187, 125, 32)"
+                            id="enviar"> <img src="../static/imagenes/anm7.png" height="200"
+                                width="335" /></button>
+                        <div class="card-body justify-content-between ">
+                            <CENTER>
+                                <p class="card-text">
+                                <h5>PÁJARO - BIRD</h5>
+                                </p>
+                            </CENTER>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm"  data-sound="../static/sonidos/sound8.mp3" onclick="animaleSound(this)">
+                        <button type="button" class="btn btn-secondary" style="background-color:rgb(187, 125, 32)"
+                            id="enviar">
+                            <img src="../static/imagenes/anm8.png" height="200" width="335" /></button>
+                        <div class="card-body justify-content-between ">
+                            <CENTER>
+                                <p class="card-text">
+                                <h5>PERRO-DOG
+                                </h5>
+                                </p>
+                            </CENTER>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm"  data-sound="../static/sonidos/sound10.mp3" onclick="animaleSound(this)">
+                        <button type="button" class="btn btn-secondary" style="background-color:rgb(187, 125, 32)"
+                            id="enviar"> <img src="../static/imagenes/anm10.png"
+                                height="200" width="335" /></button>
+                        <div class="card-body justify-content-between ">
+                            <CENTER>
+                                <p class="card-text">
+                                <h5>BURRO-DONKEY</h5>
+                                </p>
+                            </CENTER>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card shadow-sm"  data-sound="../static/sonidos/sound9.mp3" onclick="animaleSound(this)">
+                        <button type="button" class="btn btn-secondary" style="background-color:rgb(187, 125, 32)"
+                            id="enviar"> <img src="../static/imagenes/anm9.png" height="200"
+                                width="335" /></button>
+                        <div class="card-body justify-content-between ">
+                            <CENTER>
+                                <p class="card-text">
+                                <h5>DELFÍN-DOLPHIN</h5>
+                                </p>
+                            </CENTER>
+                        </div>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="bg-transparent">
+                        <button type="button" class="btn btn-transparent"
+                            id="enviar"> </button>
+                    </div>
+                </div>
+               <div class="">
+                    <div class="bg-transparent">
+                        <button type="button" class="btn btn-transparent" style="background-color:rgba(187, 125, 32, 0)"
+                            id="enviar"> <a href="/evaluacion.html"><img src="../static/imagenes/flecha-12.png" height="170"
+                            width="325"/></a></button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <script src="../static/js/js.js"></script>
+    <script src="../static/JS/animales.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
