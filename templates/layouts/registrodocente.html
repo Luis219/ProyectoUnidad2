@@ -41,8 +41,8 @@
     <div class="col-sm-4">
         <div class="card border border-info ">
           <div class="card-body text-light bg-success">
-            <h5 class="card-title  text-dark">Iniciar Sesión</h5>
-            <form method="post" action="{{url_for('logindocente1')}}" >
+            <h5 class="card-title  text-dark">Registro</h5>
+            <form method="post" action="{{url_for('registroDocente')}}" >
                 
                 <div class="form-group">
                   <label for="exampleInputEmail1">Correo electrónico</label>
@@ -58,14 +58,11 @@
                   <label class="form-check-label" for="exampleCheck1">Acepto todas las condiciones de uso</label>
                 </div>
                  <!--Botón utilizado para ingresar al sitio web-->
-                <button type="submit" class="btn btn-primary bg-dark border border-info "  >Ingresar</button>
+                <button type="submit" class="btn btn-primary bg-dark border border-info "  >Registro</button>
                 <br>
                 <br>
       
               </form>
-              <div>
-                <a href="{{ url_for('registroDocente') }}">Registrarse</a>.
-            </div>
             
           </div>
         </div>
