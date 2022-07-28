@@ -19,6 +19,7 @@ MONGO_BASEDATOS="preescolar"
 MONGO_COLECCION1="usuariosDocentes"
 MONGO_COLECCION2="usuariosAdmin"
 MONGO_COLECCION3="alumnos"
+MONGO_COLECCION4="reporte"
 cliente=pymongo.MongoClient(MONGO_URI,serverSelectionTimeoutMS=MONGO_TIEMPO_FUERA)
 #base de datos
 baseDatos=cliente[MONGO_BASEDATOS]
@@ -26,11 +27,12 @@ baseDatos=cliente[MONGO_BASEDATOS]
 coleccion=baseDatos[MONGO_COLECCION1]
 coleccion2=baseDatos[MONGO_COLECCION2]
 coleccion3=baseDatos[MONGO_COLECCION3]
+coleccion4=baseDatos[MONGO_COLECCION4]
 #Encuentra el primer documento
 x=coleccion3.find_one()
 print(x)
 #Retorna todos los documentos de la coleccion
-for documento in coleccion3.find():
+for documento in coleccion4.find():
     print(documento)
 
 #instancia de la aplicación
@@ -99,6 +101,13 @@ def removerDocente():
 
     return render_template("layouts/eliminardocente.html")
 
+@app.route("/reporte.html")
+
+def reporte():
+    """Retorna pagina de reporte"""
+
+    return render_template("layouts/reporte.html")
+
 
 
 
@@ -112,7 +121,7 @@ def logindocente1():
         if login_usuario:
             if bcrypt.hashpw(request.form['contrasenia'].encode('utf-8'), login_usuario['contrasenia'].encode('utf-8')) == login_usuario['contrasenia'].encode('utf-8'):
                 session['correo'] = request.form['correo']
-                return index()
+                return reporte()
 
         return flash('Usuario/Contraseña inválidos')
 
@@ -160,7 +169,7 @@ def eliminarDocente():
 
         
         c.delete_one({'correo' : request.form['correo']})
-        return flash('eliminado')
+        return 'eliminado'
         
 
     return render_template('layouts/eliminardocente.html')
@@ -184,6 +193,23 @@ def loginAlumno():
         c3.find_one()
         return evaluacion()
     return evaluacion()
+
+@app.route('/obtenerDatos')
+def obtenerDatos():
+    
+    c3=coleccion3
+    coleccion4
+        
+    puntaje=5
+    valoracion=4
+
+    datoAlumno=c3.find_one({"nombreaAlumno":1,"correoDocente":1})
+    coleccion3.insert_one({'puntaje':puntaje,'valoracion':valoracion,})
+    datos=coleccion3.find()
+
+    return render_template("layouts/reporte.html", coleccion3=datos)
+  
+
 
        
 
