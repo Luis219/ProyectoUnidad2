@@ -32,6 +32,27 @@ function calificar(item) {
             document.getElementById((i + 1) + nombre).style.color = "black"
         }
     }
+    alert(contador)
+
+
+}
+function enviarValoracion(){
+    alert(contador);
+    $.ajax({
+        url:"{{url_for('obtenerDatos')}}",
+        type:"POST",
+        data: {num:contador},
+        dataType:"json",
+        success:function(response){
+            console.log(response)
+        },
+        error: function(err){
+            console.log(err);
+        }
+       
+    
+    });
+
 }
 
    

@@ -241,13 +241,18 @@ def loginAlumno4():
 @app.route('/obtenerDatos')
 def obtenerDatos():
     
+    
         
     puntaje=5
-    valoracion=4
+   
+    valoracion = request.form.get("num")
 
     coleccion4.insert_one({'puntaje':puntaje,'valoracion':valoracion})
     datosC3=coleccion3.find()
     datosC4=coleccion4.find()
+   
+    
+    
 
     return render_template("layouts/reporte.html", coleccion3=datosC3, coleccion4=datosC4)
   
