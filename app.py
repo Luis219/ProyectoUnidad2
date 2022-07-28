@@ -123,7 +123,7 @@ def logindocente1():
                 session['correo'] = request.form['correo']
                 return reporte()
 
-        return flash('Usuario/Contraseña inválidos')
+        return render_template("layouts/logindocente.html")
 
 @app.route("/validaLoginAdmin", methods=['POST'])
 
@@ -184,11 +184,55 @@ def eliminarDocente():
 @app.route('/loginAlumno',methods=['POST', 'GET'])
 def loginAlumno():
     if request.method=='POST':
+        """Validación de login alumno"""
        
         c3=coleccion3
         query={}
         docente=coleccion.find_one(query,{'correo':1})
         c3.insert_one({'nombreAlumno' : request.form['alumno1'],'correoDocente':docente})
+       
+        
+        c3.find_one()
+        return evaluacion()
+    return evaluacion()
+@app.route('/loginAlumno2',methods=['POST', 'GET'])
+def loginAlumno2():
+    """Validación de login alumno"""
+    if request.method=='POST':
+       
+        c3=coleccion3
+        query={}
+        docente=coleccion.find_one(query,{'correo':1})
+      
+        c3.insert_one({'nombreAlumno' : request.form['alumno2'],'correoDocente':docente})
+ 
+        c3.find_one()
+        return evaluacion()
+    return evaluacion()
+@app.route('/loginAlumno3',methods=['POST', 'GET'])
+def loginAlumno3():
+    """Validación de login alumno"""
+    if request.method=='POST':
+       
+        c3=coleccion3
+        query={}
+        docente=coleccion.find_one(query,{'correo':1})
+      
+        c3.insert_one({'nombreAlumno' : request.form['alumno3'],'correoDocente':docente})
+    
+        c3.find_one()
+        return evaluacion()
+    return evaluacion()
+@app.route('/loginAlumno4',methods=['POST', 'GET'])
+def loginAlumno4():
+    """Validación de login alumno"""
+    if request.method=='POST':
+       
+        c3=coleccion3
+        query={}
+        docente=coleccion.find_one(query,{'correo':1})
+
+        c3.insert_one({'nombreAlumno' : request.form['alumno4'],'correoDocente':docente})
         
         c3.find_one()
         return evaluacion()
@@ -197,17 +241,15 @@ def loginAlumno():
 @app.route('/obtenerDatos')
 def obtenerDatos():
     
-    c3=coleccion3
-    coleccion4
         
     puntaje=5
     valoracion=4
 
-    datoAlumno=c3.find_one({"nombreaAlumno":1,"correoDocente":1})
-    coleccion3.insert_one({'puntaje':puntaje,'valoracion':valoracion,})
-    datos=coleccion3.find()
+    coleccion4.insert_one({'puntaje':puntaje,'valoracion':valoracion})
+    datosC3=coleccion3.find()
+    datosC4=coleccion4.find()
 
-    return render_template("layouts/reporte.html", coleccion3=datos)
+    return render_template("layouts/reporte.html", coleccion3=datosC3, coleccion4=datosC4)
   
 
 
