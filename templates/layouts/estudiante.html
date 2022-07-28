@@ -31,15 +31,22 @@
                     <button><a class="btn btn-danger btn-block btn-signin text-white" href="/logindocente.html" role="button">Docente</a></button>
                 </ul>
             </div>
+            <div class="navbar-collapse " id="navbarSupportedContent">
+                <ul class="justify-content-end">
+                    <button><a class="btn btn-danger btn-block btn-signin text-white" href="/loginadmin.html" role="button">Administrador</a></button>
+                </ul>
+            </div>
 
             <div class="col-3 mx-auto">
                 <div class="text-center">
                     <img id="profile-img" class="rounded-circle profile-img-card" src="../static/imagenes/foto1.jpg" height="200"
                     width="200" />
                     <p id="profile-name" class="profile-name-card"></p>
-                    <form class="form-signin">
-                        <button class="btn btn-lg btn-success btn-block btn-signin text-white"><a class="btn btn-lg btn-success btn-block btn-signin text-white" href="/index.html" role="button">Start</a></button>
-                    </form><!-- /form -->
+                    <!-- /form -->
+                    <form class="form-signin" method="post" action="{{ url_for('loginAlumno') }}">
+                        <input type="text" name="alumno1" value="Esteban" >
+                        <button type="submit" class="btn btn-lg btn-success btn-block btn-signin text-white"  >Start</button>
+                    </form>
                 </div>
             </div>
             <div class="col-3 mx-auto">

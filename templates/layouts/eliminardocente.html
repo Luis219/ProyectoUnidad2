@@ -41,20 +41,9 @@
     <div class="col-sm-4">
         <div class="card border border-info ">
           <div class="card-body text-light bg-success">
-            <h5 class="card-title  text-dark">Registro</h5>
-            <form method="post" action="{{url_for('registroDocente')}}" >
-              <div class="form-group">
-                <label for="inputName">Nombre</label>
-                <input type="text" class="form-control" id="inputName" name="nombre" placeholder="">
-              </div>
-              <div class="form-group">
-                <label for="inputApelido">Apellido</label>
-                <input type="text" class="form-control" id="inputApelido" name="apellido" placeholder="">
-              </div>
-              <div class="form-group">
-                <label for="inputApelido">Teléfono</label>
-                <input type="text" class="form-control" id="inputTelefono" name="telefono" placeholder="">
-              </div>
+            <h5 class="card-title  text-dark">Eliminar Docente</h5>
+            <form method="post" action="{{url_for('eliminarDocente')}}" >
+             
                 
                 
                 <div class="form-group">
@@ -62,22 +51,14 @@
                   <input type="email" class="form-control" id="exampleInputEmail1" name="correo" aria-describedby="emailHelp" placeholder="Ingrese su dirección de correo electrónico">
                   <small id="emailHelp" class="form-text text-muted">Ingrese su dirección de correo electrónico </small>
                 </div>
-                <div class="form-group">
-                  <label for="exampleInputPassword1">Contraseña</label>
-                  <input type="password" class="form-control" id="exampleInputPassword1" name="contrasenia" placeholder="Contraseña">
-                </div>
-                <div class="form-check">
-                  <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                  <label class="form-check-label" for="exampleCheck1">Acepto todas las condiciones de uso</label>
-                </div>
-                 <!--Botón utilizado para ingresar al sitio web-->
-                <button type="submit" class="btn btn-primary bg-dark border border-info "  >Registro</button>
+                
+               
+                 <!--Eliminar docenet-->
+                <button type="submit" class="btn btn-primary bg-dark border border-info "  >Eliminar</button>
                 <br>
                 <br>
       
               </form>
-            
-              <button><a class="btn btn-danger btn-block btn-signin text-white" href="/eliminardocente.html" role="button">Eliminar docente</a></button>
             
           </div>
         </div>

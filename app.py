@@ -2,6 +2,7 @@ import os
 from flask import Flask, jsonify, make_response, render_template, request, flash, url_for, redirect, session
 import cryptocode
 import json
+from numpy import delete
 import pymongo
 import bcrypt
 
@@ -15,17 +16,21 @@ MONGO_TIEMPO_FUERA=1000
 MONGO_URI="mongodb://"+MONGO_HOST+":"+MONGO_PUERTO+"/"
 
 MONGO_BASEDATOS="preescolar"
-MONGO_COLECCION="usuariosDocentes"
+MONGO_COLECCION1="usuariosDocentes"
+MONGO_COLECCION2="usuariosAdmin"
+MONGO_COLECCION3="alumnos"
 cliente=pymongo.MongoClient(MONGO_URI,serverSelectionTimeoutMS=MONGO_TIEMPO_FUERA)
 #base de datos
 baseDatos=cliente[MONGO_BASEDATOS]
 #colección
-coleccion=baseDatos[MONGO_COLECCION]
+coleccion=baseDatos[MONGO_COLECCION1]
+coleccion2=baseDatos[MONGO_COLECCION2]
+coleccion3=baseDatos[MONGO_COLECCION3]
 #Encuentra el primer documento
-x=coleccion.find_one()
+x=coleccion3.find_one()
 print(x)
 #Retorna todos los documentos de la coleccion
-for documento in coleccion.find():
+for documento in coleccion3.find():
     print(documento)
 
 #instancia de la aplicación
@@ -53,12 +58,23 @@ def index():
 def evaluacion():
 
     return render_template("layouts/evaluacion.html")
+@app.route("/puntaje.html")
+
+def puntaje():
+
+    return render_template("layouts/puntaje.html")
 
 @app.route("/accederalumno")
 
 def accederalumno():
     """Retorna Login de niños"""
     return render_template("layouts/login.html")
+
+@app.route("/accederRegistroDocente")
+
+def accederRegistroDocente():
+    """Retorna pagina de Regsitro Docente"""
+    return render_template("layouts/registrodocente.html")
 
 @app.route("/logindocente.html")
 
@@ -68,52 +84,108 @@ def logindocente():
 
     return render_template("layouts/logindocente.html")
 
+@app.route("/loginadmin.html")
+
+def loginadmin():
+    """Retorna Login de admin"""
+
+
+    return render_template("layouts/loginadmin.html")
+
+@app.route("/eliminardocente.html")
+
+def removerDocente():
+    """Retorna pagina de eliminacion de Docente"""
+
+    return render_template("layouts/eliminardocente.html")
+
+
 
 
 @app.route("/logindocente1", methods=['POST'])
 
 def logindocente1():
-        "Retorna Login de docentes"
+        "Validad Login de docentes"
 
-        login_user = coleccion.find_one({'correo' : request.form['correo']})
+        login_usuario = coleccion.find_one({'correo' : request.form['correo']})
 
-        if login_user:
-            if bcrypt.hashpw(request.form['contrasenia'].encode('utf-8'), login_user['contrasenia'].encode('utf-8')) == login_user['contrasenia'].encode('utf-8'):
+        if login_usuario:
+            if bcrypt.hashpw(request.form['contrasenia'].encode('utf-8'), login_usuario['contrasenia'].encode('utf-8')) == login_usuario['contrasenia'].encode('utf-8'):
                 session['correo'] = request.form['correo']
                 return index()
 
-        return 'Invalid username/password combination'
+        return flash('Usuario/Contraseña inválidos')
+
+@app.route("/validaLoginAdmin", methods=['POST'])
+
+def validaLoginAdmin():
+    """Valida Login de admin"""
+    login_usuarioAdmin = coleccion2.find_one({'correo' : request.form['correo']})
+
+    if login_usuarioAdmin :
+            if request.form['contrasenia'].encode('utf-8') == login_usuarioAdmin['contrasenia'].encode('utf-8'):
+                session['correo'] = request.form['correo']
+                return accederRegistroDocente()
+            else:
+                flash('Usuario/Contraseña inválidos')
+                return loginadmin()
+
+
+    return flash('Usuario/Contraseña inválidos') ,loginadmin()
+
 
 @app.route('/registroDocente', methods=['POST', 'GET'])
 def registroDocente():
     if request.method == 'POST':
         c=coleccion
-        existing_user =  c.find_one({'correo' : request.form['correo']})
+        existe_usuario =  c.find_one({'correo' : request.form['correo']})
 
-        if existing_user is None:
+        if existe_usuario is None:
             hashpass = bcrypt.hashpw(request.form['contrasenia'].encode('utf-8'), bcrypt.gensalt())
-            c.insert_one({'correo' : request.form['correo'], 'contrasenia' : hashpass})
+            c.insert_one({'nombre':request.form['nombre'],'apellido':request.form['apellido'],'telefono':request.form['telefono'],'correo' : request.form['correo'], 'contrasenia' : hashpass})
+            session['nombre'] = request.form['nombre']
+            session['apellido'] = request.form['apellido']
+            session['telefono'] = request.form['telefono']
             session['correo'] = request.form['correo']
             return index()
+        return render_template('layouts/registrodocente.html')
         
-        return 'That username already exists!'
-
+    
     return render_template('layouts/registrodocente.html')
+@app.route('/eliminarDocente', methods=['POST', 'GET'])
+def eliminarDocente():
+    if request.method == 'POST':
+        c=coleccion
+       
+
+        
+        c.delete_one({'correo' : request.form['correo']})
+        return flash('eliminado')
+        
+
+    return render_template('layouts/eliminardocente.html')
 
 
 
 
-#diccionario para el registro de usuarios Docentes
 
 
 
 
-@app.route('/validar_usuario_Alumno',methods=['POST'])
+@app.route('/loginAlumno',methods=['POST', 'GET'])
 def loginAlumno():
     if request.method=='POST':
-        signup= request.form.values()
-        if signup=="activo":
-            return render_template('layouts/index.html')
+       
+        c3=coleccion3
+        query={}
+        docente=coleccion.find_one(query,{'correo':1})
+        c3.insert_one({'nombreAlumno' : request.form['alumno1'],'correoDocente':docente})
+        
+        c3.find_one()
+        return evaluacion()
+    return evaluacion()
+
+       
 
 
 
