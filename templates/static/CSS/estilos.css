@@ -7,9 +7,39 @@ body{
     left: 0;
     right: 0;
     bottom: 60px;
-    font-size: 20px;
+    font-size: 30px;
     font-family: "Comic Sans MS", cursive, sans-serif;
-    color: white;
+    color: rgb(12, 12, 12);
     text-align: center;
     padding: 50px;
 }
+
+  .fichas-listado-v2 .voto .voto-estrellas{
+    display: block;
+    unicode-bidi: bidi-override;
+    direction: rtl;
+    width: 75%;
+    margin-top: 40px;
+  }
+  .fichas-listado-v2 .voto .voto-estrellas i{
+    color: #f1db14;
+    font-size: 53px;
+    padding-right: 3px;
+  }
+  
+  .fichas-listado-v2 .voto .voto-estrellas i:hover{
+    cursor: pointer;
+    color:  #f1db14;
+  }
+  .fichas-listado-v2 .voto .voto-estrellas i.fa-star,
+  .fichas-listado-v2 .voto .voto-estrellas:hover i{
+    color: #c0c0c0;
+  }
+  .fichas-listado-v2 .voto .voto-estrellas:hover i:before{
+    content: "\f005";
+  }
+  .fichas-listado-v2 .voto .voto-estrellas i.fa-star-o:hover:before,
+  .fichas-listado-v2 .voto .voto-estrellas i:hover ~ i:before{
+    content: "\f005";
+    color: #f1db14;
+  }

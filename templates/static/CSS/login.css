@@ -1,6 +1,14 @@
 body {
-    background-image: url("../imagenes/Fondos.jpg");
-    height: 200px;
-    width: 1350px;
-    
-  }
+  background-image: url("../imagenes/Fondos.jpg");
+  height: 200px;
+  width: 1350px;
+  position: fixed;
+  background-repeat: no-repeat;
+}
+.imag {
+  background-image: url("../imagenes/ani.jpg");
+  height: 200px;
+  width: 1350px;
+  position: fixed;
+  background-repeat: no-repeat;
+}
