@@ -23,6 +23,10 @@ MONGO_COLECCION4="reporte"
 MONGO_COLECCION="usuarios"
 MONGO_COLECCIONPERMISOS="permisos"
 MONGO_COLECCIONROLES="rols"
+MONGO_COLECCIONMATERIA="materia"
+MONGO_COLECCIONPARALELO="paralelo"
+MONGO_COLECCIONHORARIO="horario"
+
 cliente=pymongo.MongoClient(MONGO_URI,serverSelectionTimeoutMS=MONGO_TIEMPO_FUERA)
 #base de datos
 baseDatos=cliente[MONGO_BASEDATOS]
@@ -30,6 +34,9 @@ baseDatos=cliente[MONGO_BASEDATOS]
 coleccionUsuarios=baseDatos[MONGO_COLECCION]
 coleccionRoles=baseDatos[MONGO_COLECCIONROLES]
 coleccionPermisos=baseDatos[MONGO_COLECCIONPERMISOS]
+coleccionHorario=baseDatos[MONGO_COLECCIONHORARIO]
+coleccionMateria=baseDatos[MONGO_COLECCIONMATERIA]
+coleccionParalelo=baseDatos[MONGO_COLECCIONPARALELO]
 coleccion=baseDatos[MONGO_COLECCION1]
 coleccion2=baseDatos[MONGO_COLECCION2]
 coleccion3=baseDatos[MONGO_COLECCION3]
@@ -86,7 +93,19 @@ def accederalumno():
     """Retorna Login de niños"""
     return render_template("layouts/login.html")
 
-@app.route("/accederRegistroDocente",methods=['POST'])
+@app.route("/asignacion.html", methods=['POST', 'GET'])
+
+def accederAsignacion():
+    """Retorna pagina de asignacion"""
+    materia=coleccionMateria.find()
+    paralelo=coleccionParalelo.find()
+    horarioInicio=coleccionHorario.find()
+    horarioFin=coleccionHorario.find()
+    query={"rol":{"$eq":"docente"}}
+    docente=coleccionUsuarios.find(query)
+
+    return render_template("layouts/asignacion.html", coleccionMateria=materia, coleccionParalelo=paralelo, coleccionHorarioInicio=horarioInicio, coleccionHorarioFin=horarioFin,coleccionUsuarios=docente)
+
 
 
 @app.route("/registrousuario.html", methods=['POST', 'GET'])
@@ -222,6 +241,20 @@ def registroUsuario():
             
         return render_template('layouts/registrousuario.html')
     return render_template('layouts/registrousuario.html')
+
+#Registro de asignacion
+@app.route('/registroAsignacion', methods=['POST', 'GET'])
+def registroAsignacion():
+    if request.method == 'POST':
+        existe_usuario =  coleccionUsuarios.find_one({'nombre' : request.form['menuDocentes']})
+        print(existe_usuario)
+
+        if existe_usuario:
+            actualizacion={ "$set":{'materia': request.form['menuMaterias'],'paralelo': request.form['menuParalelos'],'hora inicio': request.form['menuHorarioInicio'], 'hora fin': request.form['menuHorarioFin']}}
+            coleccionUsuarios.update_one(existe_usuario,actualizacion)
+            return reporte()
+        return render_template('layouts/asignacion.html')
+
 
 
 @app.route('/registroDocente', methods=['POST', 'GET'])
