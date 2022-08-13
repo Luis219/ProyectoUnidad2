@@ -7,6 +7,13 @@ function animaleSound(element){
     audio.src= sound;
     audio.play();
 }
+var audio1 = document.querySelector('.audio1');
+
+function pregunta(element){
+    var sound1 = element.getAttribute('data-sound1');
+    audio1.src= sound1;
+    audio1.play();
+}
 
 var contador;
 function calificar(item) {
