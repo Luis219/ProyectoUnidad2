@@ -42,7 +42,12 @@
           <div class="card-body text-light bg-success">
             <h5 class="card-title  text-dark">Registro Estudiante</h5>
             <form method="post" action="{{url_for('registroEstudiante')}}" >
+
              <div class="form-group">
+                    <label for="inputImagen">Cargar Imagen</label>
+                    <input type="file" class="form-control" id="inputImagen" name="imagen" placeholder="">
+             </div>
+              <div class="form-group">
                     <label for="inputCedula">Cedula</label>
                     <input type="text" class="form-control" id="inputCedula" name="cedula" placeholder="">
              </div>
@@ -62,6 +67,13 @@
                 <label for="inputEdad">Edad</label>
                 <input type="number" class="form-control" id="inputEdad" name="edad" placeholder="">
               </div>
+              <select id="menuRoles" name="menuRoles" class="form-select form-select-sm" aria-label=".form-select-sm example">
+                <option selected> Roles  </option>
+                {% for rol in coleccionRoles %}
+                <option  name="rol" value="{{ rol.name }}">{{ rol.name}}</option>
+                {% endfor %}
+            
+              </select>
                
               <select id="menuMateria" name="menuMateria" class="form-select form-select-sm" aria-label=".form-select-sm example">
                 <option selected> Materia  </option>
@@ -90,10 +102,7 @@
                   <label for="exampleInputPassword1">Contraseña</label>
                   <input type="password" class="form-control" id="exampleInputPassword1" name="contrasenia" placeholder="Contraseña">
                 </div>
-                <div class="form-check">
-                  <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                  <label class="form-check-label" for="exampleCheck1">Acepto todas las condiciones de uso</label>
-                </div>
+               
                  <!--Botón utilizado para ingresar al sitio web-->
                 <button type="submit" class="btn btn-primary bg-dark border border-info "  >Registro</button>
                 <br>
@@ -101,7 +110,7 @@
       
               </form>
             
-              <button><a class="btn btn-danger btn-block btn-signin text-white" href="/eliminardocente.html" role="button">Eliminar docente</a></button>
+              
             
           </div>
         </div>

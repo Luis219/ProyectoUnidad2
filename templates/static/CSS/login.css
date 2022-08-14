@@ -2,7 +2,7 @@ body {
   background-image: url("../imagenes/Fondos.jpg");
   height: 200px;
   width: 1350px;
-  position: fixed;
+  position:static;
   background-repeat: no-repeat;
 }
 .imag {

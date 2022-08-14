@@ -41,10 +41,14 @@
 
             <div class="col-3 mx-auto">
                 <div class="text-center">
+                    {% for usuario in coleccionUsuarios %}
+                <option  name="rol" value="{{ usuario.imagen }}">{{ usuario.imagen}}</option>
+                {% endfor %}
                     <img id="profile-img" class="rounded-circle profile-img-card" src="../static/imagenes/foto1.jpg" height="200"
                     width="200" />
                     <p id="profile-name" class="profile-name-card"></p>
                     <!-- /form -->
+                    
                     <form class="form-signin" method="post" action="{{ url_for('loginAlumno') }}">
                         <input type="text" name="alumno1" value="Esteban" >
                         <button type="submit" class="btn btn-lg btn-success btn-block btn-signin text-white"  >Start</button>

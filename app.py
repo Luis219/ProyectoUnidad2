@@ -83,9 +83,10 @@ def puntaje():
 
 def estudiante():
     """Retorna a inicio"""
+    imagen=coleccionUsuarios.find()
 
 
-    return render_template("layouts/estudiante.html")
+    return render_template("layouts/estudiante.html", coleccionUsuarios=imagen)
 
 @app.route("/accederalumno")
 
@@ -127,9 +128,10 @@ def usuario():
 def accederestudiante():
     """Retorna Registro Estudiantes"""
     materia=coleccionMateria.find()
+    roles=coleccionRoles.find()
 
 
-    return render_template("layouts/registroestudiante.html", coleccionMateria=materia)
+    return render_template("layouts/registroestudiante.html", coleccionMateria=materia, coleccionRoles=roles)
 
 @app.route("/loginadmin.html")
 
@@ -195,9 +197,11 @@ def logindocente1():
 
 def validaLoginAdmin():
     """Valida Login de admin"""
-    login_usuarioAdmin = coleccion2.find_one({'correo' : request.form['correo']})
 
-    if login_usuarioAdmin :
+    query={"rol":{"$eq":"administrador"}}
+    login_usuarioAdmin = coleccionUsuarios.find_one(query,{'correo' : request.form['correo']})
+
+    if login_usuarioAdmin is True:
             if request.form['contrasenia'].encode('utf-8') == login_usuarioAdmin['contrasenia'].encode('utf-8'):
                 session['correo'] = request.form['correo']
                 return accederRegistroUsuario()
@@ -270,8 +274,9 @@ def registroEstudiante():
         existe_usuario =  coleccionUsuarios.find_one({'cedula' : request.form['cedula']})
         edad=request.form['edad']
        
-        if existe_usuario is None and edad>=3 and edad<=5:
-            coleccionUsuarios.insert_one({'cedula' : request.form['cedula'],'nombre':request.form['nombre'],'apellido':request.form['apellido'],'telefono':request.form['telefono'],'edad':request.form['edad'],'materia':request.form['menuMateria'],'correo':request.form['correo'],'contrasenia':request.form['contrasenia']})
+       
+        if existe_usuario is None and int(edad)>=3 and int(edad)<=5:
+            coleccionUsuarios.insert_one({'imagen':request.files['imagen'],'cedula' : request.form['cedula'],'nombre':request.form['nombre'],'apellido':request.form['apellido'],'telefono':request.form['telefono'],'edad':request.form['edad'],'materia':request.form['menuMateria'],'rol':request.form['menuRoles'],'correo':request.form['correo'],'contrasenia':request.form['contrasenia']})
             return reporte()
         return render_template('layouts/registroestudiante.html')
 
