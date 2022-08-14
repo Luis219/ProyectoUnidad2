@@ -123,6 +123,14 @@ def usuario():
 
     return render_template("layouts/loginusuario.html")
 
+@app.route("/registroestudiante.html")
+def accederestudiante():
+    """Retorna Registro Estudiantes"""
+    materia=coleccionMateria.find()
+
+
+    return render_template("layouts/registroestudiante.html", coleccionMateria=materia)
+
 @app.route("/loginadmin.html")
 
 def loginadmin():
@@ -254,6 +262,18 @@ def registroAsignacion():
             coleccionUsuarios.update_one(existe_usuario,actualizacion)
             return reporte()
         return render_template('layouts/asignacion.html')
+
+#Registro de estudiante
+@app.route('/registroEstudiante', methods=['POST', 'GET'])
+def registroEstudiante():
+    if request.method == 'POST':
+        existe_usuario =  coleccionUsuarios.find_one({'cedula' : request.form['cedula']})
+        edad=request.form['edad']
+       
+        if existe_usuario is None and edad>=3 and edad<=5:
+            coleccionUsuarios.insert_one({'cedula' : request.form['cedula'],'nombre':request.form['nombre'],'apellido':request.form['apellido'],'telefono':request.form['telefono'],'edad':request.form['edad'],'materia':request.form['menuMateria'],'correo':request.form['correo'],'contrasenia':request.form['contrasenia']})
+            return reporte()
+        return render_template('layouts/registroestudiante.html')
 
 
 
