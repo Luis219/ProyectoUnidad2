@@ -40,7 +40,6 @@ coleccionMateria=baseDatos[MONGO_COLECCIONMATERIA]
 coleccionParalelo=baseDatos[MONGO_COLECCIONPARALELO]
 coleccionNota=baseDatos[MONGO_COLECCIONNOTAS]
 coleccion=baseDatos[MONGO_COLECCION1]
-coleccion2=baseDatos[MONGO_COLECCION2]
 coleccion3=baseDatos[MONGO_COLECCION3]
 coleccion4=baseDatos[MONGO_COLECCION4]
 #Encuentra el primer documento
@@ -121,7 +120,7 @@ def accederRegistroUsuario():
 
 @app.route("/loginusuario.html")
 def usuario():
-    """Retorna Login de docentes"""
+    """Retorna Login de usuario"""
 
 
     return render_template("layouts/loginusuario.html")
@@ -165,11 +164,13 @@ def reporte():
 
     return render_template("layouts/reporte.html")
 
+
+#Validación de usuario
 @app.route("/loginusuario",  methods=['POST'])
 
 def loginusuario():
         "Validar Login de usuarios"
-
+        query={"rol":{"$eq":"docente"}}
         login_usuario = coleccionUsuarios.find_one({'correo' : request.form['correo']})
 
         if login_usuario:
@@ -180,28 +181,13 @@ def loginusuario():
                  return usuario()
 
 
-        return render_template("layouts/logindocente.html")
+        return render_template("layouts/loginusuario.html")
 
 
 
 
 
-@app.route("/logindocente1",  methods=['POST'])
 
-def logindocente1():
-        "Validad Login de docentes"
-
-        login_usuario = coleccion.find_one({'correo' : request.form['correo']})
-
-        if login_usuario:
-            if bcrypt.hashpw(request.form['contrasenia'].encode('utf-8'), bcrypt.gensalt()) == login_usuario['contrasenia']:
-                session['correo'] = request.form['correo']
-                return reporte()
-            else:
-                 return loginusuario()
-
-
-        return render_template("layouts/logindocente.html")
 
 @app.route("/validaLoginAdmin", methods=['POST', 'GET'])
 
@@ -303,29 +289,9 @@ def registroNota():
         return render_template('layouts/registroestudiante.html')
 
 
-@app.route('/registroDocente', methods=['POST', 'GET'])
-def registroDocente():
-    if request.method == 'POST':
-        c=coleccion
-        existe_usuario =  c.find_one({'correo' : request.form['correo']})
-
-        if existe_usuario is None:
-            hashpass = bcrypt.hashpw(request.form['contrasenia'].encode('utf-8'), bcrypt.gensalt())
-            c.insert_one({'nombre':request.form['nombre'],'apellido':request.form['apellido'],'telefono':request.form['telefono'],'correo' : request.form['correo'], 'contrasenia' : hashpass})
-            session['nombre'] = request.form['nombre']
-            session['apellido'] = request.form['apellido']
-            session['telefono'] = request.form['telefono']
-            session['correo'] = request.form['correo']
-            return reporte()
-        return render_template('layouts/registrodocente.html')
-        
-    
-    return render_template('layouts/registrodocente.html')
 @app.route('/eliminarDocente', methods=['POST', 'GET'])
 def eliminarDocente():
     if request.method == 'POST':
-        
-
         
         coleccion.delete_one({'correo' : request.form['correo']})
         return 'eliminado'
