@@ -26,6 +26,7 @@ MONGO_COLECCIONROLES="rols"
 MONGO_COLECCIONMATERIA="materia"
 MONGO_COLECCIONPARALELO="paralelo"
 MONGO_COLECCIONHORARIO="horario"
+MONGO_COLECCIONNOTAS="notas"
 
 cliente=pymongo.MongoClient(MONGO_URI,serverSelectionTimeoutMS=MONGO_TIEMPO_FUERA)
 #base de datos
@@ -37,6 +38,7 @@ coleccionPermisos=baseDatos[MONGO_COLECCIONPERMISOS]
 coleccionHorario=baseDatos[MONGO_COLECCIONHORARIO]
 coleccionMateria=baseDatos[MONGO_COLECCIONMATERIA]
 coleccionParalelo=baseDatos[MONGO_COLECCIONPARALELO]
+coleccionNota=baseDatos[MONGO_COLECCIONNOTAS]
 coleccion=baseDatos[MONGO_COLECCION1]
 coleccion2=baseDatos[MONGO_COLECCION2]
 coleccion3=baseDatos[MONGO_COLECCION3]
@@ -132,6 +134,14 @@ def accederestudiante():
 
 
     return render_template("layouts/registroestudiante.html", coleccionMateria=materia, coleccionRoles=roles)
+@app.route("/registronota.html")
+def accederRegistroNota():
+    """Retorna pagina de Registro Nota"""
+    query={"rol":{"$eq":"estudiante"}}
+    usuario=coleccionUsuarios.find(query)
+    
+    return render_template("layouts/registronota.html", coleccionUsuarios=usuario)
+
 
 @app.route("/loginadmin.html")
 
@@ -281,6 +291,17 @@ def registroEstudiante():
         return render_template('layouts/registroestudiante.html')
 
 
+#Registro de Nota
+@app.route('/registroNota', methods=['POST', 'GET'])
+def registroNota():
+    if request.method == 'POST':
+        
+        nota=request.form['calificacion']
+        if int(nota)>=1 and int(nota)<=5:
+            coleccionNota.insert_one({'cedula' : request.form['menuCedula'],'calificacion':request.form['calificacion']})
+            return reporte()
+        return render_template('layouts/registroestudiante.html')
+
 
 @app.route('/registroDocente', methods=['POST', 'GET'])
 def registroDocente():
@@ -384,15 +405,12 @@ def loginAlumno4():
 @app.route('/obtenerDatos')
 def obtenerDatos():
     """Obtención de datos estudiante"""  
-    puntaje=5
-   
-    valoracion = request.form.get("num")
 
-    coleccion4.insert_one({'puntaje':puntaje,'valoracion':valoracion})
-    datosC3=coleccion3.find()
-    datosC4=coleccion4.find()
+    cedula=coleccionNota.find()
+    calificacion=coleccionNota.find()
    
-    return render_template("layouts/reporte.html", coleccion3=datosC3, coleccion4=datosC4)
+   
+    return render_template("layouts/reporte.html", cedulas=cedula,  calificaciones=calificacion)
   
 
 
