@@ -17,8 +17,6 @@ MONGO_URI="mongodb://"+MONGO_HOST+":"+MONGO_PUERTO+"/"
 
 MONGO_BASEDATOS="preescolar"
 MONGO_COLECCION1="usuariosDocentes"
-MONGO_COLECCION2="usuariosAdmin"
-MONGO_COLECCION3="alumnos"
 MONGO_COLECCION4="reporte"
 MONGO_COLECCION="usuarios"
 MONGO_COLECCIONPERMISOS="permisos"
@@ -40,7 +38,6 @@ coleccionMateria=baseDatos[MONGO_COLECCIONMATERIA]
 coleccionParalelo=baseDatos[MONGO_COLECCIONPARALELO]
 coleccionNota=baseDatos[MONGO_COLECCIONNOTAS]
 coleccion=baseDatos[MONGO_COLECCION1]
-coleccion3=baseDatos[MONGO_COLECCION3]
 coleccion4=baseDatos[MONGO_COLECCION4]
 #Encuentra el primer documento
 x=coleccionRoles.find_one()
@@ -56,13 +53,14 @@ app.secret_key = "luisparedez"
 #rutas de la carpeta templates/static
 app._static_folder = os.path.abspath("templates/static")
 
+#página principal del aplicativo
 @app.route("/")
 
 def login():
 
     return render_template("layouts/estudiante.html")
 
-#ruta de la página principal index
+#ruta de la página de enseñanza del aplicativo
 @app.route("/index.html")
 
 def index():
@@ -71,15 +69,18 @@ def index():
 
 @app.route("/evaluacion.html")
 
+#retorna la página del juego
 def evaluacion():
 
     return render_template("layouts/evaluacion.html")
 @app.route("/puntaje.html")
 
+#retorna la página de calificación de la app
 def puntaje():
 
     return render_template("layouts/puntaje.html")
 
+#Permite acceder a la página inicial del aplicativo
 @app.route("/estudiante.html")
 
 def estudiante():
@@ -89,12 +90,7 @@ def estudiante():
 
     return render_template("layouts/estudiante.html", coleccionUsuarios=imagen)
 
-@app.route("/accederalumno")
-
-def accederalumno():
-    """Retorna Login de niños"""
-    return render_template("layouts/login.html")
-
+#Permite acceder a la página de asignación de parámetros a docente
 @app.route("/asignacion.html", methods=['POST', 'GET'])
 
 def accederAsignacion():
@@ -109,7 +105,7 @@ def accederAsignacion():
     return render_template("layouts/asignacion.html", coleccionMateria=materia, coleccionParalelo=paralelo, coleccionHorarioInicio=horarioInicio, coleccionHorarioFin=horarioFin,coleccionUsuarios=docente)
 
 
-
+#Permite acceder a la página de registro de un nuevo usuario
 @app.route("/registrousuario.html", methods=['POST', 'GET'])
 
 def accederRegistroUsuario():
@@ -118,6 +114,7 @@ def accederRegistroUsuario():
     permisos=coleccionPermisos.find()
     return render_template("layouts/registrousuario.html", coleccionRoles=roles, coleccionPermisos=permisos)
 
+#Permite acceder a la página de login usuario
 @app.route("/loginusuario.html")
 def usuario():
     """Retorna Login de usuario"""
@@ -125,14 +122,15 @@ def usuario():
 
     return render_template("layouts/loginusuario.html")
 
+#Permite acceder a la página de registro de estudiante
 @app.route("/registroestudiante.html")
 def accederestudiante():
     """Retorna Registro Estudiantes"""
     materia=coleccionMateria.find()
     roles=coleccionRoles.find()
 
-
     return render_template("layouts/registroestudiante.html", coleccionMateria=materia, coleccionRoles=roles)
+#Permite acceder a la página de registro Nota
 @app.route("/registronota.html")
 def accederRegistroNota():
     """Retorna pagina de Registro Nota"""
@@ -141,7 +139,7 @@ def accederRegistroNota():
     
     return render_template("layouts/registronota.html", coleccionUsuarios=usuario)
 
-
+#Permiter acceder a la página de login admin
 @app.route("/loginadmin.html")
 
 def loginadmin():
@@ -150,6 +148,7 @@ def loginadmin():
 
     return render_template("layouts/loginadmin.html")
 
+#Permite acceder la página para eliminar un usuario de tipo docente
 @app.route("/eliminardocente.html")
 
 def removerDocente():
@@ -159,6 +158,7 @@ def removerDocente():
 
 @app.route("/reporte.html")
 
+#Permite acceder a la página de reporte
 def reporte():
     """Retorna pagina de reporte"""
 
@@ -184,13 +184,9 @@ def loginusuario():
         return render_template("layouts/loginusuario.html")
 
 
-
-
-
-
-
 @app.route("/validaLoginAdmin", methods=['POST', 'GET'])
 
+#Valida un usuario con el rol administrador
 def validaLoginAdmin():
     """Valida Login de admin"""
 
@@ -208,6 +204,7 @@ def validaLoginAdmin():
 
     return loginadmin()
 
+#Registra un nuevo usuario
 @app.route('/registroUsuario', methods=['POST', 'GET'])
 def registroUsuario():
     if request.method == 'POST':
@@ -250,7 +247,7 @@ def registroUsuario():
         return render_template('layouts/registrousuario.html')
     return render_template('layouts/registrousuario.html')
 
-#Registro de asignacion
+#Registro de asignacion de materia, aula y horario a un docente
 @app.route('/registroAsignacion', methods=['POST', 'GET'])
 def registroAsignacion():
     if request.method == 'POST':
@@ -258,7 +255,7 @@ def registroAsignacion():
         print(existe_usuario)
 
         if existe_usuario:
-            actualizacion={ "$set":{'materia': request.form['menuMaterias'],'paralelo': request.form['menuParalelos'],'hora inicio': request.form['menuHorarioInicio'], 'hora fin': request.form['menuHorarioFin']}}
+            actualizacion={ "$set":{'materia': request.form['menuMaterias'],'aula': request.form['menuParalelos'],'hora inicio': request.form['menuHorarioInicio'], 'hora fin': request.form['menuHorarioFin']}}
             coleccionUsuarios.update_one(existe_usuario,actualizacion)
             return reporte()
         return render_template('layouts/asignacion.html')
@@ -288,7 +285,7 @@ def registroNota():
             return reporte()
         return render_template('layouts/registroestudiante.html')
 
-
+#Sirve para eliminar un usuario de tipo docente
 @app.route('/eliminarDocente', methods=['POST', 'GET'])
 def eliminarDocente():
     if request.method == 'POST':
@@ -300,74 +297,7 @@ def eliminarDocente():
     return render_template('layouts/eliminardocente.html')
 
 
-
-
-
-
-
-
-@app.route('/loginAlumno',methods=['POST', 'GET'])
-def loginAlumno():
-    if request.method=='POST':
-        """Validación de login alumno"""
-       
-        
-        query={}
-        docenteCorreo=coleccion.find_one(query,{'correo':1})
-        docenteNombre=coleccion.find_one(query,{'nombre':1})
-        docenteApellido=coleccion.find_one(query,{'apellido':1})
-        docenteTelefono=coleccion.find_one(query,{'telefono':1})
-        coleccion3.insert_one({'nombreAlumno' : request.form['alumno1'],'correoDocente':docenteCorreo,'nombreDocente':docenteNombre,'apellido':docenteApellido,'DocenteTelefono': docenteTelefono})
-       
-        
-        coleccion3.find_one()
-        return index()
-    return evaluacion()
-
-@app.route('/loginAlumno2',methods=['POST', 'GET'])
-def loginAlumno2():
-    """Validación de login alumno"""
-    if request.method=='POST':
-       
-       
-        query={}
-        docente=coleccion.find_one(query,{'correo':1})
-      
-        coleccion3.insert_one({'nombreAlumno' : request.form['alumno2'],'correoDocente':docente})
- 
-        coleccion3.find_one()
-        return evaluacion()
-    return evaluacion()
-@app.route('/loginAlumno3',methods=['POST', 'GET'])
-def loginAlumno3():
-    """Validación de login alumno"""
-    if request.method=='POST':
-       
-        
-        query={}
-        docente=coleccion.find_one(query,{'correo':1})
-      
-        coleccion3.insert_one({'nombreAlumno' : request.form['alumno3'],'correoDocente':docente})
-    
-        coleccion3.find_one()
-        return evaluacion()
-    return evaluacion()
-
-@app.route('/loginAlumno4',methods=['POST', 'GET'])
-def loginAlumno4():
-    """Validación de login alumno"""
-    if request.method=='POST':
-       
-        
-        query={}
-        docente=coleccion.find_one(query,{'correo':1})
-
-        coleccion3.insert_one({'nombreAlumno' : request.form['alumno4'],'correoDocente':docente})
-        
-        coleccion3.find_one()
-        return evaluacion()
-    return evaluacion()
-
+#Función para generar el reporte de calificaciones
 @app.route('/obtenerDatos')
 def obtenerDatos():
     """Obtención de datos estudiante"""  
