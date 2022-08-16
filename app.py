@@ -1,3 +1,4 @@
+
 import os
 from flask import Flask, jsonify, make_response, render_template, request, flash, url_for, redirect, session
 from werkzeug.utils import secure_filename
@@ -64,7 +65,7 @@ def login():
     return render_template("layouts/estudiante.html", coleccionUsuarios=imagen, nombres=nombre)
 
 #ruta de la página de enseñanza del aplicativo
-@app.route("/index.html")
+@app.route("/index.html", methods=['POST', 'GET'])
 
 def index():
 
@@ -215,23 +216,26 @@ def registroUsuario():
                 return reporte()
 
             elif rol=="administrador":
-                queryPermiso={"_id":{"$in":[3,4,5,6,7,8]}}
+                numeroUsuarios=coleccionUsuarios.count_documents({})
+                if numeroUsuarios==1:
+                    queryPermiso={"_id":{"$in":[3,4,5,6,7,8]}}
+                
+                    permisosAdministrador=list(coleccionPermisos.find(queryPermiso))
+                    contrasenia=request.form['contrasenia']
+
+                
+                    hashpass =bcrypt.generate_password_hash(contrasenia).decode('utf-8') 
+
             
-                permisosAdministrador=list(coleccionPermisos.find(queryPermiso))
-                contrasenia=request.form['contrasenia']
-
-               
-                hashpass =bcrypt.generate_password_hash(contrasenia).decode('utf-8') 
-
-        
-                coleccionUsuarios.insert_one({'nombre':request.form['nombre'],'apellido':request.form['apellido'],'telefono':request.form['telefono'],'rol':request.form['menuRoles'],'permiso':permisosAdministrador,  'correo' : request.form['correo'], 'contrasenia' : hashpass, "estado":"activo"})
-                session['nombre'] = request.form['nombre']
-                session['apellido'] = request.form['apellido']
-                session['telefono'] = request.form['telefono']
-                session['correo'] = request.form['correo']
-                session['rol']=request.form['menuRoles']
-                session['permiso']=permisosAdministrador
-                return reporte()
+                    coleccionUsuarios.insert_one({'nombre':request.form['nombre'],'apellido':request.form['apellido'],'telefono':request.form['telefono'],'rol':request.form['menuRoles'],'permiso':permisosAdministrador,  'correo' : request.form['correo'], 'contrasenia' : hashpass, "estado":"activo"})
+                    session['nombre'] = request.form['nombre']
+                    session['apellido'] = request.form['apellido']
+                    session['telefono'] = request.form['telefono']
+                    session['correo'] = request.form['correo']
+                    session['rol']=request.form['menuRoles']
+                    session['permiso']=permisosAdministrador
+                    return reporte()
+                return render_template('layouts/registrousuario.html')
             return render_template('layouts/registrousuario.html')
             
         return render_template('layouts/registrousuario.html')
@@ -285,7 +289,7 @@ def registroEstudiante():
        
         if existe_usuario is None and int(edad)>=3 and int(edad)<=5:
             imagen.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            coleccionUsuarios.insert_one({'imagen':imagen.filename,'cedula' : request.form['cedula'],'nombre':request.form['nombre'],'apellido':request.form['apellido'],'telefono':request.form['telefono'],'edad':request.form['edad'],'materia':request.form['menuMateria'],'rol':request.form['menuRoles'],'correo':request.form['correo'],'contrasenia':request.form['contrasenia']})
+            coleccionUsuarios.insert_one({'imagen':imagen.filename,'cedula' : request.form['cedula'],'nombre':request.form['nombre'],'apellido':request.form['apellido'],'telefono':request.form['telefono'],'edad':request.form['edad'],'materia':request.form['menuMateria'],'rol':request.form['menuRoles'],'correo':request.form['correo'],'contrasenia':request.form['contrasenia'],'estado':"activo"})
            
             return reporte()
         return render_template('layouts/registroestudiante.html')

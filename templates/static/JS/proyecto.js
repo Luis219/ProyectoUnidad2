@@ -157,7 +157,7 @@ function getRandomImage(){
     return rimg;
 }
 var score=0;
-var intento=0;
+var preguntas=0;
 function checkAnswer(x, element){
     //Verificar la respuesta correcta
     
@@ -168,7 +168,7 @@ function checkAnswer(x, element){
             console.log("Incorrecto!");
             showGt("<h1>Incorrecto!</h1>");
             sndWrong.play();
-            intento=intento+1;
+            preguntas=preguntas+1;
         }else{
            
            
@@ -179,19 +179,15 @@ function checkAnswer(x, element){
             sndCorrect.play();
             score=score+1;
             showGt("<h1>Correcto!</h1>"+score);
-            intento=intento+1;
+            preguntas=preguntas+1;
           
-            
-            
-          
-                
-        
+                  
             
             /** 
             showGt("<h2></h2>",score);
             */
         }
-        verIntentos(intento)
+        contarPreguntas(preguntas)
         verScore(score);
         
         setTimeout(function(){
@@ -204,12 +200,12 @@ function checkAnswer(x, element){
 
 
 
-function verIntentos(intento){
-    //ver la cantidad de intentos
-    if(intento==5){
+function contarPreguntas(preguntas){
+    //verificar la cantidad de Preguntas
+    if(preguntas==5){
         redireccion();
     }
-    console.log(intento)
+    console.log(preguntas)
     
 
 }

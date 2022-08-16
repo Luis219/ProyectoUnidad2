@@ -1,0 +1,66 @@
+db.permisos.insertMany([
+{ "_id" : 1, "descripcion" : "ver calificaciones" },
+{ "_id" : 2, "descripcion" : "actualizar calificaciones" },
+{ "_id" : 3, "descripcion" : "crear usuario" },
+{ "_id" : 4, "descripcion" : "asignar roles y permisos" },
+{ "_id" : 5, "descripcion" : "asignar estudiantes" },
+{ "_id" : 6, "descripcion" : "asignar anio lectivo" },
+{ "_id" : 7, "descripcion" : "crear aula/paralelo" },
+{ "_id" : 8, "descripcion" : "asignar horario" }
+]);
+
+db.rols.insertMany([{"_id":1, "name":"docente"
+},
+{"_id":2, "name":"administrador"
+}
+]);
+db.rols.insert({"_id":3,"name":"estudiante"});
+
+db.usuarios.insert({
+"_id":8,
+"cedula":123,
+"nombre":"Luis",
+"Apellido": "Paredez",
+"correo":"lp@gmai.com"
+
+});
+
+
+db.permisos.find({"_id":{"$eq":1}});
+db.permisos.find({"_id":{"$eq":2}});
+
+db.usuarios.find().pretty();
+db.permisos.find();
+db.rols.find();
+db.notas.find();
+
+
+db.usuarios.find("rol":{"$eq":"administrador"}).pretty();
+
+
+
+
+db.materia.insert(
+{ "_id" : 1, "name" : "Juego" }
+);
+
+db.paralelo.insertMany(
+[{ "_id" : 1, "name" : "A"},
+{ "_id" : 2, "name" : "B"},
+{ "_id" : 3, "name" : "C"},]);
+
+db.horario.insertMany(
+[{ "_id" : 1, "hora_inicio" : "09:00:00", "hora_fin":"10:00:00"},
+{ "_id" : 2, "hora_inicio" : "10:00:00", "hora_fin":"11:00:00"}]);
+
+
+
+db.aula.insert_one([{ "_id" : 1, "name" : "A1"},
+{ "_id" : 2, "name" : "A2"},
+{ "_id" : 3, "name" : "C"},]);
+db.usuarios.find({"rol":{$eq:"docente"}}).pretty()
+
+db.horario.find().pretty()
+db.paralelo.find().pretty()
+db.materia.find().pretty()
+db.usuarios.find().pretty()
