@@ -41,18 +41,15 @@
     <div class="col-sm-4">
         <div class="card border border-info ">
           <div class="card-body text-light bg-success">
-            <h5 class="card-title  text-dark">Eliminar Docente</h5>
-            <form method="post" action="{{url_for('eliminarDocente')}}" >
-             
-                
+            <h5 class="card-title  text-dark">Desactivar Usuario</h5>
+            <form method="post" action="{{url_for('desactivarUsuario')}}" >
                 
                 <div class="form-group">
                   <label for="exampleInputEmail1">Correo electrónico</label>
                   <input type="email" class="form-control" id="exampleInputEmail1" name="correo" aria-describedby="emailHelp" placeholder="Ingrese su dirección de correo electrónico">
                   <small id="emailHelp" class="form-text text-muted">Ingrese su dirección de correo electrónico </small>
                 </div>
-                
-               
+                            
                  <!--Eliminar docenet-->
                 <button type="submit" class="btn btn-primary bg-dark border border-info "  >Eliminar</button>
                 <br>

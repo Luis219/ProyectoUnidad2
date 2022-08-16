@@ -244,3 +244,11 @@ function showGt(text){
     //mostrar texto en el juego
     $("#juegotexto").hide().html(text).fadeIn();
 }
+
+var loadFile = function(event) {
+    var output = document.getElementById('output');
+    output.src = URL.createObjectURL(event.target.files[0]);
+    output.onload = function() {
+      URL.revokeObjectURL(output.src) 
+    }
+  };

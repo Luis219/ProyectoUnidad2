@@ -1,5 +1,6 @@
 import os
 from flask import Flask, jsonify, make_response, render_template, request, flash, url_for, redirect, session
+from werkzeug.utils import secure_filename
 import cryptocode
 import json
 from numpy import delete
@@ -16,8 +17,6 @@ MONGO_TIEMPO_FUERA=1000
 MONGO_URI="mongodb://"+MONGO_HOST+":"+MONGO_PUERTO+"/"
 
 MONGO_BASEDATOS="preescolar"
-MONGO_COLECCION1="usuariosDocentes"
-MONGO_COLECCION4="reporte"
 MONGO_COLECCION="usuarios"
 MONGO_COLECCIONPERMISOS="permisos"
 MONGO_COLECCIONROLES="rols"
@@ -37,14 +36,9 @@ coleccionHorario=baseDatos[MONGO_COLECCIONHORARIO]
 coleccionMateria=baseDatos[MONGO_COLECCIONMATERIA]
 coleccionParalelo=baseDatos[MONGO_COLECCIONPARALELO]
 coleccionNota=baseDatos[MONGO_COLECCIONNOTAS]
-coleccion=baseDatos[MONGO_COLECCION1]
-coleccion4=baseDatos[MONGO_COLECCION4]
 #Encuentra el primer documento
 x=coleccionRoles.find_one()
 print(x)
-#Retorna todos los documentos de la coleccion
-for documento in coleccion4.find():
-    print(documento)
 
 #instancia de la aplicación
 app = Flask(__name__)
@@ -53,12 +47,19 @@ app.secret_key = "luisparedez"
 #rutas de la carpeta templates/static
 app._static_folder = os.path.abspath("templates/static")
 
+UPLOAD_FOLDER = 'templates/static/imagenes'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 #página principal del aplicativo
-@app.route("/")
+@app.route("/",methods=['POST', 'GET'])
 
 def login():
 
-    return render_template("layouts/estudiante.html")
+    imagen=coleccionUsuarios.find()
+    query={"rol":{"$eq":"estudiante"}}
+    nombre=coleccionUsuarios.find(query)
+
+    return render_template("layouts/estudiante.html", coleccionUsuarios=imagen, nombres=nombre)
 
 #ruta de la página de enseñanza del aplicativo
 @app.route("/index.html")
@@ -148,13 +149,13 @@ def loginadmin():
 
     return render_template("layouts/loginadmin.html")
 
-#Permite acceder la página para eliminar un usuario de tipo docente
-@app.route("/eliminardocente.html")
+#Permite acceder la página para desactivar un usuario
+@app.route("/desactivarusuario.html")
 
-def removerDocente():
-    """Retorna pagina de eliminacion de Docente"""
+def removerUsuario():
+    """Retorna pagina de desactivacion de docente"""
 
-    return render_template("layouts/eliminardocente.html")
+    return render_template("layouts/desactivarusuario.html")
 
 @app.route("/reporte.html")
 
@@ -171,7 +172,7 @@ def reporte():
 def loginusuario():
         "Validar Login de usuarios"
         query={"rol":{"$eq":"docente"}}
-        login_usuario = coleccionUsuarios.find_one({'correo' : request.form['correo']})
+        login_usuario = coleccionUsuarios.find_one({'correo' : request.form['correo'],'estado':1})
 
         if login_usuario:
             if bcrypt.hashpw(request.form['contrasenia'].encode('utf-8'), bcrypt.gensalt()) == login_usuario['contrasenia']:
@@ -193,16 +194,17 @@ def validaLoginAdmin():
     query={"rol":{"$eq":"administrador"}}
     login_usuarioAdmin = coleccionUsuarios.find_one(query,{'correo' : request.form['correo']})
 
-    if login_usuarioAdmin is True:
+    if login_usuarioAdmin:
             if request.form['contrasenia'].encode('utf-8') == login_usuarioAdmin['contrasenia'].encode('utf-8'):
                 session['correo'] = request.form['correo']
                 return accederRegistroUsuario()
             else:
    
                 return loginadmin()
+    else:
+        return index()
 
-
-    return loginadmin()
+    
 
 #Registra un nuevo usuario
 @app.route('/registroUsuario', methods=['POST', 'GET'])
@@ -266,10 +268,13 @@ def registroEstudiante():
     if request.method == 'POST':
         existe_usuario =  coleccionUsuarios.find_one({'cedula' : request.form['cedula']})
         edad=request.form['edad']
-       
+        imagen=request.files['imagen']
+        filename = secure_filename(imagen.filename)
        
         if existe_usuario is None and int(edad)>=3 and int(edad)<=5:
-            coleccionUsuarios.insert_one({'imagen':request.files['imagen'],'cedula' : request.form['cedula'],'nombre':request.form['nombre'],'apellido':request.form['apellido'],'telefono':request.form['telefono'],'edad':request.form['edad'],'materia':request.form['menuMateria'],'rol':request.form['menuRoles'],'correo':request.form['correo'],'contrasenia':request.form['contrasenia']})
+            imagen.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            coleccionUsuarios.insert_one({'imagen':imagen.filename,'cedula' : request.form['cedula'],'nombre':request.form['nombre'],'apellido':request.form['apellido'],'telefono':request.form['telefono'],'edad':request.form['edad'],'materia':request.form['menuMateria'],'rol':request.form['menuRoles'],'correo':request.form['correo'],'contrasenia':request.form['contrasenia']})
+           
             return reporte()
         return render_template('layouts/registroestudiante.html')
 
@@ -285,16 +290,18 @@ def registroNota():
             return reporte()
         return render_template('layouts/registroestudiante.html')
 
-#Sirve para eliminar un usuario de tipo docente
-@app.route('/eliminarDocente', methods=['POST', 'GET'])
-def eliminarDocente():
+#Sirve para desactivar un usuario
+@app.route('/desactivarUsuario', methods=['POST', 'GET'])
+def desactivarUsuario():
     if request.method == 'POST':
-        
-        coleccion.delete_one({'correo' : request.form['correo']})
-        return 'eliminado'
+        query={"rol":{"$ne":"administrador"}}
+        existe_usuario =  coleccionUsuarios.find_one(query,{'correo' : request.form['correo']})
+        actualizacion={"$set":{"estado":0}}
+        coleccionUsuarios.update_one(existe_usuario, actualizacion)
+        return 'desactivado'
         
 
-    return render_template('layouts/eliminardocente.html')
+    return render_template('layouts/desactivarusuario.html')
 
 
 #Función para generar el reporte de calificaciones

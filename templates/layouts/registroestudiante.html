@@ -41,12 +41,13 @@
         <div class="card border border-info ">
           <div class="card-body text-light bg-success">
             <h5 class="card-title  text-dark">Registro Estudiante</h5>
-            <form method="post" action="{{url_for('registroEstudiante')}}" >
+            <form method="post" action="{{url_for('registroEstudiante')}}" enctype="multipart/form-data">
 
              <div class="form-group">
                     <label for="inputImagen">Cargar Imagen</label>
-                    <input type="file" class="form-control" id="inputImagen" name="imagen" placeholder="">
+                    <input type="file" class="form-control" id="inputImagen"  autocomplete="off"  required onchange="loadFile(event)" name="imagen" placeholder="">
              </div>
+             <img id="output" width="50"/>
               <div class="form-group">
                     <label for="inputCedula">Cedula</label>
                     <input type="text" class="form-control" id="inputCedula" name="cedula" placeholder="">
@@ -116,6 +117,7 @@
         </div>
       </div>
     </center>
+    
     
 </body>
 </html>
