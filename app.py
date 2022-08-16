@@ -5,7 +5,8 @@ import cryptocode
 import json
 from numpy import delete
 import pymongo
-import bcrypt
+
+from flask_bcrypt import Bcrypt 
 
 
 #conexion base datos
@@ -50,6 +51,7 @@ app._static_folder = os.path.abspath("templates/static")
 UPLOAD_FOLDER = 'templates/static/imagenes'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+bcrypt = Bcrypt(app)
 #página principal del aplicativo
 @app.route("/",methods=['POST', 'GET'])
 
@@ -172,10 +174,11 @@ def reporte():
 def loginusuario():
         "Validar Login de usuarios"
         query={"rol":{"$eq":"docente"}}
-        login_usuario = coleccionUsuarios.find_one({'correo' : request.form['correo'],'estado':1})
-
+        login_usuario = coleccionUsuarios.find_one({'correo' : request.form['correo'],'estado':"activo"})
+        contrasenia=request.form['contrasenia']
         if login_usuario:
-            if bcrypt.hashpw(request.form['contrasenia'].encode('utf-8'), bcrypt.gensalt()) == login_usuario['contrasenia']:
+            
+            if  bcrypt.check_password_hash(login_usuario['contrasenia'],contrasenia):
                 session['correo'] = request.form['correo']
                 return reporte()
             else:
@@ -184,27 +187,6 @@ def loginusuario():
 
         return render_template("layouts/loginusuario.html")
 
-
-@app.route("/validaLoginAdmin", methods=['POST', 'GET'])
-
-#Valida un usuario con el rol administrador
-def validaLoginAdmin():
-    """Valida Login de admin"""
-
-    query={"rol":{"$eq":"administrador"}}
-    login_usuarioAdmin = coleccionUsuarios.find_one(query,{'correo' : request.form['correo']})
-
-    if login_usuarioAdmin:
-            if request.form['contrasenia'].encode('utf-8') == login_usuarioAdmin['contrasenia'].encode('utf-8'):
-                session['correo'] = request.form['correo']
-                return accederRegistroUsuario()
-            else:
-   
-                return loginadmin()
-    else:
-        return index()
-
-    
 
 #Registra un nuevo usuario
 @app.route('/registroUsuario', methods=['POST', 'GET'])
@@ -219,9 +201,11 @@ def registroUsuario():
                 queryPermiso={"_id":{"$in":[1,2]}}
             
                 permisosDocente=list(coleccionPermisos.find(queryPermiso))
+                contrasenia=request.form['contrasenia']
 
-                hashpass = bcrypt.hashpw(request.form['contrasenia'].encode('utf-8'), bcrypt.gensalt())
-                coleccionUsuarios.insert_one({'nombre':request.form['nombre'],'apellido':request.form['apellido'],'telefono':request.form['telefono'],'rol':request.form['menuRoles'],'permiso':permisosDocente,  'correo' : request.form['correo'], 'contrasenia' : hashpass})
+               
+                hashpass =bcrypt.generate_password_hash(contrasenia).decode('utf-8') 
+                coleccionUsuarios.insert_one({'nombre':request.form['nombre'],'apellido':request.form['apellido'],'telefono':request.form['telefono'],'rol':request.form['menuRoles'],'permiso':permisosDocente,  'correo' : request.form['correo'], 'contrasenia' : hashpass,"estado":"activo"})
                 session['nombre'] = request.form['nombre']
                 session['apellido'] = request.form['apellido']
                 session['telefono'] = request.form['telefono']
@@ -234,9 +218,13 @@ def registroUsuario():
                 queryPermiso={"_id":{"$in":[3,4,5,6,7,8]}}
             
                 permisosAdministrador=list(coleccionPermisos.find(queryPermiso))
+                contrasenia=request.form['contrasenia']
 
-                hashpass = bcrypt.hashpw(request.form['contrasenia'].encode('utf-8'), bcrypt.gensalt())
-                coleccionUsuarios.insert_one({'nombre':request.form['nombre'],'apellido':request.form['apellido'],'telefono':request.form['telefono'],'rol':request.form['menuRoles'],'permiso':permisosAdministrador,  'correo' : request.form['correo'], 'contrasenia' : hashpass})
+               
+                hashpass =bcrypt.generate_password_hash(contrasenia).decode('utf-8') 
+
+        
+                coleccionUsuarios.insert_one({'nombre':request.form['nombre'],'apellido':request.form['apellido'],'telefono':request.form['telefono'],'rol':request.form['menuRoles'],'permiso':permisosAdministrador,  'correo' : request.form['correo'], 'contrasenia' : hashpass, "estado":"activo"})
                 session['nombre'] = request.form['nombre']
                 session['apellido'] = request.form['apellido']
                 session['telefono'] = request.form['telefono']
@@ -248,6 +236,30 @@ def registroUsuario():
             
         return render_template('layouts/registrousuario.html')
     return render_template('layouts/registrousuario.html')
+
+
+@app.route("/validaLoginAdmin", methods=['POST', 'GET'])
+
+#Valida un usuario con el rol administrador
+def validaLoginAdmin():
+    """Valida Login de admin"""
+
+    query={"rol":{"$eq":"administrador"}}
+    login_usuarioAdmin = coleccionUsuarios.find_one(query,{'correo' : request.form['correo'],'contrasenia':request.form['contrasenia']})
+    contrasenia=request.form['contrasenia']
+
+    if login_usuarioAdmin:
+            
+            if  bcrypt.check_password_hash(login_usuarioAdmin['contrasenia'],contrasenia):
+                session['correo'] = request.form['correo']
+                return accederRegistroUsuario()
+            else:
+   
+                return loginadmin()
+    else:
+        return loginadmin()
+
+    
 
 #Registro de asignacion de materia, aula y horario a un docente
 @app.route('/registroAsignacion', methods=['POST', 'GET'])
@@ -296,7 +308,7 @@ def desactivarUsuario():
     if request.method == 'POST':
         query={"rol":{"$ne":"administrador"}}
         existe_usuario =  coleccionUsuarios.find_one(query,{'correo' : request.form['correo']})
-        actualizacion={"$set":{"estado":0}}
+        actualizacion={"$set":{"estado":"inactivo"}}
         coleccionUsuarios.update_one(existe_usuario, actualizacion)
         return 'desactivado'
         
