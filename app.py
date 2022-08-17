@@ -178,8 +178,9 @@ def reporte():
 
 def loginusuario():
         "Validar Login de usuarios"
-        query={"rol":{"$eq":"docente"}}
-        login_usuario = coleccionUsuarios.find_one({'correo' : request.form['correo'],'estado':"activo"})
+        
+    
+        login_usuario = coleccionUsuarios.find_one({'correo' : request.form['correo'],'rol':'docente','estado':'activo'})
         contrasenia=request.form['contrasenia']
         if login_usuario:
             
@@ -189,9 +190,9 @@ def loginusuario():
             else:
                 flash('Error al ingresar usuario')
                 return usuario()
-
-
-        return render_template("layouts/loginusuario.html")
+        else:
+                flash('Error al ingresar usuario')
+                return usuario()
 
 #Registra un nuevo usuario
 @app.route('/registroUsuario', methods=['POST', 'GET'])
@@ -252,23 +253,25 @@ def registroUsuario():
 def validaLoginAdmin():
     """Valida Login de admin"""
 
-    query={"rol":{"$eq":"administrador"}}
-    login_usuarioAdmin = coleccionUsuarios.find_one(query,{'correo' : request.form['correo']})
+    
+    login_usuarioAdmin = coleccionUsuarios.find_one({'correo' : request.form['correo'],'rol':'administrador','estado':'activo'})
     contrasenia=request.form['contrasenia']
-    logincontrasenia=login_usuarioAdmin['contrasenia']
+
 
 
     if login_usuarioAdmin:
             
-        if  bcrypt.check_password_hash(logincontrasenia,contrasenia):
-                session['correo'] = request.form['correo']
+        if  bcrypt.check_password_hash(login_usuarioAdmin['contrasenia'],contrasenia):
+            session['correo'] = request.form['correo']
 
-                return accederRegistroUsuario()
+            return accederRegistroUsuario()
         else:
-                flash('Error al acceder')
-                return loginadmin()
+            flash('Error al acceder')
+            return loginadmin()
     else:
+        flash('Error al acceder')
         return loginadmin()
+    
 
 #Registro de asignacion de materia, aula y horario a un docente
 @app.route('/registroAsignacion', methods=['POST', 'GET'])
