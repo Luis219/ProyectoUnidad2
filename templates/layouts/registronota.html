@@ -63,6 +63,46 @@
                 <br>
       
               </form>
+              <form method="post" action="{{url_for('obtenerDatos')}}"><button type="submit">Ver notas</button> </form>
+
+               
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Cedula</th>
+
+          <th scope="col">calificaciones</th>
+       
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr> 
+          <!--Se recorren los ids-->
+          <td >
+              {%for documento in cedulas %}
+              <p class="card-text">{{ documento.cedula }}</p>
+              {%endfor%}
+            
+          </td>
+
+            <!--Se recorren los nombres de alumnos-->
+            <!--Se recorren los ids-->
+          
+           
+           <td>
+              <!--Se recorren los puntajes-->
+              {%for documento in calificaciones %}
+              <p class="card-text">{{ documento.calificacion}}</p>
+              {%endfor%}
+            </td>
+         
+
+        </tr>
+
+      </tbody>
+
+    </table>
             
               
             

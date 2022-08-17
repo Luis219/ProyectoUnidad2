@@ -1,4 +1,5 @@
 
+
 import os
 from flask import Flask, jsonify, make_response, render_template, request, flash, url_for, redirect, session
 from werkzeug.utils import secure_filename
@@ -26,11 +27,12 @@ MONGO_COLECCIONMATERIA="materia"
 MONGO_COLECCIONPARALELO="paralelo"
 MONGO_COLECCIONHORARIO="horario"
 MONGO_COLECCIONNOTAS="notas"
+MONGO_COLECCIONAULAS="aula"
 
 cliente=pymongo.MongoClient(MONGO_URI,serverSelectionTimeoutMS=MONGO_TIEMPO_FUERA)
 #base de datos
 baseDatos=cliente[MONGO_BASEDATOS]
-#colección 
+#colecciones
 coleccionUsuarios=baseDatos[MONGO_COLECCION]
 coleccionRoles=baseDatos[MONGO_COLECCIONROLES]
 coleccionPermisos=baseDatos[MONGO_COLECCIONPERMISOS]
@@ -38,6 +40,7 @@ coleccionHorario=baseDatos[MONGO_COLECCIONHORARIO]
 coleccionMateria=baseDatos[MONGO_COLECCIONMATERIA]
 coleccionParalelo=baseDatos[MONGO_COLECCIONPARALELO]
 coleccionNota=baseDatos[MONGO_COLECCIONNOTAS]
+coleccionAula=baseDatos[MONGO_COLECCIONAULAS]
 #Encuentra el primer documento
 x=coleccionRoles.find_one()
 print(x)
@@ -45,7 +48,7 @@ print(x)
 #instancia de la aplicación
 app = Flask(__name__)
 #clave secreta de la aplicación
-app.secret_key = "luisparedez"
+app.secret_key = "luisparedez123"
 #rutas de la carpeta templates/static
 app._static_folder = os.path.abspath("templates/static")
 
@@ -103,17 +106,18 @@ def accederAsignacion():
     paralelo=coleccionParalelo.find()
     horarioInicio=coleccionHorario.find()
     horarioFin=coleccionHorario.find()
+    aula=coleccionAula.find()
     query={"rol":{"$eq":"docente"}}
     docente=coleccionUsuarios.find(query)
 
-    return render_template("layouts/asignacion.html", coleccionMateria=materia, coleccionParalelo=paralelo, coleccionHorarioInicio=horarioInicio, coleccionHorarioFin=horarioFin,coleccionUsuarios=docente)
+    return render_template("layouts/asignacion.html", coleccionMateria=materia, coleccionAula=aula, coleccionParalelo=paralelo, coleccionHorarioInicio=horarioInicio, coleccionHorarioFin=horarioFin,coleccionUsuarios=docente)
 
 
 #Permite acceder a la página de registro de un nuevo usuario
 @app.route("/registrousuario.html", methods=['POST', 'GET'])
 
 def accederRegistroUsuario():
-    """Retorna pagina de Regsitro Docente"""
+    """Retorna pagina de Registro Usuario"""
     roles=coleccionRoles.find()
     permisos=coleccionPermisos.find()
     return render_template("layouts/registrousuario.html", coleccionRoles=roles, coleccionPermisos=permisos)
@@ -183,11 +187,11 @@ def loginusuario():
                 session['correo'] = request.form['correo']
                 return reporte()
             else:
-                 return usuario()
+                flash('Error al ingresar usuario')
+                return usuario()
 
 
         return render_template("layouts/loginusuario.html")
-
 
 #Registra un nuevo usuario
 @app.route('/registroUsuario', methods=['POST', 'GET'])
@@ -213,11 +217,12 @@ def registroUsuario():
                 session['correo'] = request.form['correo']
                 session['rol']=request.form['menuRoles']
                 session['permiso']=permisosDocente
+                flash('Registro con exito')
                 return reporte()
 
             elif rol=="administrador":
                 numeroUsuarios=coleccionUsuarios.count_documents({})
-                if numeroUsuarios==1:
+                if numeroUsuarios==0:
                     queryPermiso={"_id":{"$in":[3,4,5,6,7,8]}}
                 
                     permisosAdministrador=list(coleccionPermisos.find(queryPermiso))
@@ -234,6 +239,7 @@ def registroUsuario():
                     session['correo'] = request.form['correo']
                     session['rol']=request.form['menuRoles']
                     session['permiso']=permisosAdministrador
+                    flash('Registro con exito')
                     return reporte()
                 return render_template('layouts/registrousuario.html')
             return render_template('layouts/registrousuario.html')
@@ -241,29 +247,28 @@ def registroUsuario():
         return render_template('layouts/registrousuario.html')
     return render_template('layouts/registrousuario.html')
 
-
 @app.route("/validaLoginAdmin", methods=['POST', 'GET'])
-
 #Valida un usuario con el rol administrador
 def validaLoginAdmin():
     """Valida Login de admin"""
 
     query={"rol":{"$eq":"administrador"}}
-    login_usuarioAdmin = coleccionUsuarios.find_one(query,{'correo' : request.form['correo'],'contrasenia':request.form['contrasenia']})
+    login_usuarioAdmin = coleccionUsuarios.find_one(query,{'correo' : request.form['correo']})
     contrasenia=request.form['contrasenia']
+    logincontrasenia=login_usuarioAdmin['contrasenia']
+
 
     if login_usuarioAdmin:
             
-            if  bcrypt.check_password_hash(login_usuarioAdmin['contrasenia'],contrasenia):
+        if  bcrypt.check_password_hash(logincontrasenia,contrasenia):
                 session['correo'] = request.form['correo']
+
                 return accederRegistroUsuario()
-            else:
-   
+        else:
+                flash('Error al acceder')
                 return loginadmin()
     else:
         return loginadmin()
-
-    
 
 #Registro de asignacion de materia, aula y horario a un docente
 @app.route('/registroAsignacion', methods=['POST', 'GET'])
@@ -271,13 +276,16 @@ def registroAsignacion():
     if request.method == 'POST':
         existe_usuario =  coleccionUsuarios.find_one({'nombre' : request.form['menuDocentes']})
         print(existe_usuario)
-
         if existe_usuario:
+
             actualizacion={ "$set":{'materia': request.form['menuMaterias'],'aula': request.form['menuParalelos'],'hora inicio': request.form['menuHorarioInicio'], 'hora fin': request.form['menuHorarioFin']}}
             coleccionUsuarios.update_one(existe_usuario,actualizacion)
-            return reporte()
-        return render_template('layouts/asignacion.html')
-
+            flash('Registrado')
+        else:
+            flash('Error')
+            return accederAsignacion()
+        return render_template("layouts/asignacion.html")
+        
 #Registro de estudiante
 @app.route('/registroEstudiante', methods=['POST', 'GET'])
 def registroEstudiante():
@@ -286,12 +294,19 @@ def registroEstudiante():
         edad=request.form['edad']
         imagen=request.files['imagen']
         filename = secure_filename(imagen.filename)
+
+        contrasenia=request.form['contrasenia']
+
+                
+        hashpass =bcrypt.generate_password_hash(contrasenia).decode('utf-8') 
        
         if existe_usuario is None and int(edad)>=3 and int(edad)<=5:
             imagen.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            coleccionUsuarios.insert_one({'imagen':imagen.filename,'cedula' : request.form['cedula'],'nombre':request.form['nombre'],'apellido':request.form['apellido'],'telefono':request.form['telefono'],'edad':request.form['edad'],'materia':request.form['menuMateria'],'rol':request.form['menuRoles'],'correo':request.form['correo'],'contrasenia':request.form['contrasenia'],'estado':"activo"})
-           
+            coleccionUsuarios.insert_one({'imagen':imagen.filename,'cedula' : request.form['cedula'],'nombre':request.form['nombre'],'apellido':request.form['apellido'],'telefono':request.form['telefono'],'edad':request.form['edad'],'materia':request.form['menuMateria'],'rol':request.form['menuRoles'],'correo':request.form['correo'],'contrasenia':hashpass,'estado':"activo"})
+            flash('Registrado con exito')
             return reporte()
+        else:
+            flash('Error al registrar')
         return render_template('layouts/registroestudiante.html')
 
 
@@ -303,8 +318,13 @@ def registroNota():
         nota=request.form['calificacion']
         if int(nota)>=1 and int(nota)<=5:
             coleccionNota.insert_one({'cedula' : request.form['menuCedula'],'calificacion':request.form['calificacion']})
+            flash('Registrado')
             return reporte()
-        return render_template('layouts/registroestudiante.html')
+        else:
+            flash('Error al registrar')
+            return accederRegistroNota()
+    
+    return render_template('layouts/registroestudiante.html')
 
 #Sirve para desactivar un usuario
 @app.route('/desactivarUsuario', methods=['POST', 'GET'])
@@ -312,35 +332,25 @@ def desactivarUsuario():
     if request.method == 'POST':
         query={"rol":{"$ne":"administrador"}}
         existe_usuario =  coleccionUsuarios.find_one(query,{'correo' : request.form['correo']})
-        actualizacion={"$set":{"estado":"inactivo"}}
-        coleccionUsuarios.update_one(existe_usuario, actualizacion)
-        return 'desactivado'
+        if existe_usuario:
+            actualizacion={"$set":{"estado":"inactivo"}}
+            coleccionUsuarios.update_one(existe_usuario, actualizacion)
+            flash('Usuario Desactivado')
+        else:
+            flash('Error al Desactivar usuario')
         
 
     return render_template('layouts/desactivarusuario.html')
 
-
 #Función para generar el reporte de calificaciones
-@app.route('/obtenerDatos')
+@app.route('/obtenerDatos', methods=['POST', 'GET'])
 def obtenerDatos():
     """Obtención de datos estudiante"""  
 
     cedula=coleccionNota.find()
     calificacion=coleccionNota.find()
    
-   
-    return render_template("layouts/reporte.html", cedulas=cedula,  calificaciones=calificacion)
-  
-
-
-       
-
-
-
-    
-
-
-
+    return render_template("layouts/registronota.html", cedulas=cedula,  calificaciones=calificacion)
 
 
 

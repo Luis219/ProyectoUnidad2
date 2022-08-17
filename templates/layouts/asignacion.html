@@ -54,7 +54,7 @@
               <select id="menuDocentes" name="menuDocentes" class="form-select form-select-sm" aria-label=".form-select-sm example">
                 <option selected>Opciones</option>
                 {% for usuario in coleccionUsuarios %}
-                <option  name="usuario" value="{{ usuario.nombre  + usuario.apellido}}">{{ usuario.nombre +usuario.apellido}}</option>
+                <option  name="usuario" value="{{ usuario.nombre}}">{{ usuario.nombre +" "+usuario.apellido}}</option>
                 {% endfor %}
              
               </select>
@@ -77,12 +77,29 @@
               </select>
             </td>
             </tr>
-              <br>
-             <br>
+
+            <tr>
+
+              <td>
+               <label for="menuAulas">Aulas</label>
+             </td>
+             <td>
+               <select id="menuAulas" name="menuAulas" class="form-select form-select-sm" aria-label=".form-select-sm example">
+                 <option selected>Aulas</option>
+                 {% for aula in coleccionAula %}
+                 <option  name="rol" value="{{ aula.name}}">{{ aula.name}}</option>
+                 {% endfor %}
+             
+               </select>
+             </td>
+             </tr>
+
+
+            
              <tr>
 
              <td>
-              <label for="menuParalelos">Aulas</label>
+              <label for="menuParalelos">Paralelos</label>
             </td>
             <td>
               <select id="menuParalelos" name="menuParalelos" class="form-select form-select-sm" aria-label=".form-select-sm example">
