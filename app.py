@@ -263,7 +263,7 @@ def validaLoginAdmin():
             
         if  bcrypt.check_password_hash(login_usuarioAdmin['contrasenia'],contrasenia):
             session['correo'] = request.form['correo']
-
+ 
             return accederRegistroUsuario()
         else:
             flash('Error al acceder')
